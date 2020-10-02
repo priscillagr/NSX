@@ -1,3 +1,4 @@
+#Link referência: https://notthe.blog/2019/05/route-based-vpn-on-an-nsx-v-edge-part-2-deployment/
 #Body do RestApi para criar VPN baseado em Rotas (BGP)
 #(GET) https://NSX/api/4.0/edges/edge-ID/ipsec/config
 #(PUT) https://NSX/api/4.0/edges/edge-ID/ipsec/config
