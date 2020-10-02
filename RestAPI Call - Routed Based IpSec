@@ -3,6 +3,7 @@
 #(PUT) https://nsxv02.nuvem.local/api/4.0/edges/edge-1/ipsec/config
 #BGP Filter: Out Deny 0.0.0.0/0
 #BGP Filter: Out Permit ANY
+#VTI Network: 192.254.113.0/29 (192.254.113.1 - 192.254.113.6)
 
 <?xml version="1.0" encoding="UTF-8"?>
 <ipsec>
