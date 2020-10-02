@@ -1,13 +1,16 @@
 #Body do RestApi para criar VPN baseado em Rotas (BGP)
-#(GET) https://nsxv02.nuvem.local/api/4.0/edges/edge-1/ipsec/config
-#(PUT) https://nsxv02.nuvem.local/api/4.0/edges/edge-1/ipsec/config
+#(GET) https://NSX/api/4.0/edges/edge-ID/ipsec/config
+#(PUT) https://NSX/api/4.0/edges/edge-ID/ipsec/config
 #BGP Filter: Out Deny 0.0.0.0/0
 #BGP Filter: Out Permit ANY
-#VTI Network: 192.254.113.0/29 (192.254.113.1 - 192.254.113.6)
+#VTI Network VPN 1: 192.254.113.0/30 (192.254.113.1 - 192.254.113.2)
+#VTI Network VPN 2: 192.254.113.4/30 (192.254.113.5 - 192.254.113.6)
+
+# Configuracao do EDGE 01 do Site B
 
 <?xml version="1.0" encoding="UTF-8"?>
 <ipsec>
-    <version>1</version>
+    <version>6</version>
     <enabled>false</enabled>
     <logging>
         <enable>true</enable>
@@ -16,14 +19,42 @@
     <sites>
         <site>
             <enabled>true</enabled>
-            <name>Priscilla-Redund</name>
+            <name>VPN-1</name>
             <localId>10.0.0.113</localId>
             <localIp>10.0.0.113</localIp>
             <peerId>10.0.0.13</peerId>
             <peerIp>10.0.0.13</peerIp>
             <ipsecSessionType>routebasedsession</ipsecSessionType>
             <tunnelInterface>
-                 <ipAddress>169.254.113.13/30</ipAddress>
+                 <ipAddress>169.254.113.1/30</ipAddress>
+                 <mtu>1416</mtu>
+           </tunnelInterface>
+            <encryptionAlgorithm>aes</encryptionAlgorithm>
+            <enablePfs>true</enablePfs>
+            <dhGroup>dh14</dhGroup>
+            <localSubnets>
+                <subnet>0.0.0.0/0</subnet>
+            </localSubnets>
+            <peerSubnets>
+                <subnet>0.0.0.0/0</subnet>
+            </peerSubnets>
+            <psk>New-Site-PSK</psk>
+            <authenticationMode>psk</authenticationMode>
+            <ikeOption>ikev2</ikeOption>
+            <digestAlgorithm>sha1</digestAlgorithm>
+            <responderOnly>false</responderOnly>
+            <complianceSuite>none</complianceSuite>
+        </site>
+        <site>
+            <enabled>true</enabled>
+            <name>VPN-2</name>
+            <localId>10.0.0.113</localId>
+            <localIp>10.0.0.113</localIp>
+            <peerId>10.0.0.24</peerId>
+            <peerIp>10.0.0.24</peerIp>
+            <ipsecSessionType>routebasedsession</ipsecSessionType>
+            <tunnelInterface>
+                 <ipAddress>169.254.113.5/30</ipAddress>
                  <mtu>1416</mtu>
            </tunnelInterface>
             <encryptionAlgorithm>aes</encryptionAlgorithm>
@@ -44,7 +75,82 @@
         </site>
     </sites>
     <global>
-        <psk>senha_psk</psk>
+        <psk>teste123</psk>
+        <caCertificates/>
+        <crlCertificates/>
+    </global>
+</ipsec>
+
+# Configuracao do EDGE 01 do Site A
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ipsec>
+    <version>9</version>
+    <enabled>false</enabled>
+    <logging>
+        <enable>true</enable>
+        <logLevel>warning</logLevel>
+    </logging>
+    <sites>
+        <site>
+            <enabled>true</enabled>
+            <name>VPN-1</name>
+            <localId>10.0.0.13</localId>
+            <localIp>10.0.0.13</localIp>
+            <peerId>10.0.0.113</peerId>
+            <peerIp>10.0.0.113</peerIp>
+            <ipsecSessionType>routebasedsession</ipsecSessionType>
+            <tunnelInterface>
+                 <ipAddress>169.254.113.2/30</ipAddress>
+                 <mtu>1416</mtu>
+           </tunnelInterface>
+            <encryptionAlgorithm>aes</encryptionAlgorithm>
+            <enablePfs>true</enablePfs>
+            <dhGroup>dh14</dhGroup>
+            <localSubnets>
+                <subnet>0.0.0.0/0</subnet>
+            </localSubnets>
+            <peerSubnets>
+                <subnet>0.0.0.0/0</subnet>
+            </peerSubnets>
+            <psk>New-Site-PSK</psk>
+            <authenticationMode>psk</authenticationMode>
+            <ikeOption>ikev2</ikeOption>
+            <digestAlgorithm>sha1</digestAlgorithm>
+            <responderOnly>false</responderOnly>
+            <complianceSuite>none</complianceSuite>
+        </site>
+        <site>
+            <enabled>true</enabled>
+            <name>VPN-2</name>
+            <localId>10.0.0.24</localId>
+            <localIp>10.0.0.24</localIp>
+            <peerId>10.0.0.113</peerId>
+            <peerIp>10.0.0.113</peerIp>
+            <ipsecSessionType>routebasedsession</ipsecSessionType>
+            <tunnelInterface>
+                 <ipAddress>169.254.113.6/30</ipAddress>
+                 <mtu>1416</mtu>
+           </tunnelInterface>
+            <encryptionAlgorithm>aes</encryptionAlgorithm>
+            <enablePfs>true</enablePfs>
+            <dhGroup>dh14</dhGroup>
+            <localSubnets>
+                <subnet>0.0.0.0/0</subnet>
+            </localSubnets>
+            <peerSubnets>
+                <subnet>0.0.0.0/0</subnet>
+            </peerSubnets>
+            <psk>New-Site-PSK</psk>
+            <authenticationMode>psk</authenticationMode>
+            <ikeOption>ikev2</ikeOption>
+            <digestAlgorithm>sha1</digestAlgorithm>
+            <responderOnly>false</responderOnly>
+            <complianceSuite>none</complianceSuite>
+        </site>
+    </sites>
+    <global>
+        <psk>teste123</psk>
         <caCertificates/>
         <crlCertificates/>
     </global>
