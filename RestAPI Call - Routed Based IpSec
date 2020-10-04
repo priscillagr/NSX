@@ -1,13 +1,17 @@
 #Link referência: https://notthe.blog/2019/05/route-based-vpn-on-an-nsx-v-edge-part-2-deployment/
-#Body do RestApi para criar VPN baseado em Rotas (BGP)
+#Esse arquivo mostra como configurar redundância de IpSec VPN entre NSX-V. Essa configuração deve ser realizada via RestAPI e utilizar BGP como protocolo de 
+#roteamento dinâmico.
+#Chamadas RestAPI:
 #(GET) https://NSX/api/4.0/edges/edge-ID/ipsec/config
 #(PUT) https://NSX/api/4.0/edges/edge-ID/ipsec/config
+#Filtros BGP para remover Default Originate do roteamento:
 #BGP Filter: Out Deny 0.0.0.0/0
 #BGP Filter: Out Permit ANY
+#Redes VTI utilizadas para fechar vizinhança BGP dentro dos tuneils IpSec
 #VTI Network VPN 1: 192.254.113.0/30 (192.254.113.1 - 192.254.113.2)
 #VTI Network VPN 2: 192.254.113.4/30 (192.254.113.5 - 192.254.113.6)
 
-# Configuracao do EDGE 01 do Site B
+# Configuracao da VPN 01 e VPN02 do Site B
 
 <?xml version="1.0" encoding="UTF-8"?>
 <ipsec>
@@ -82,7 +86,7 @@
     </global>
 </ipsec>
 
-# Configuracao do EDGE 01 do Site A
+# Configuracao da VPN01 e VPN02 do Site A
 
 <?xml version="1.0" encoding="UTF-8"?>
 <ipsec>
